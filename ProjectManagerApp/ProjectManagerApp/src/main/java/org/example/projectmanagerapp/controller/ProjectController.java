@@ -1,8 +1,8 @@
 package org.example.projectmanagerapp.controller;
 
 import org.example.projectmanagerapp.entity.Project;
-import org.example.projectmanagerapp.repository.ProjectRepository;
 import org.springframework.web.bind.annotation.*;
+import org.example.projectmanagerapp.service.ProjectService;
 
 import java.util.List;
 
@@ -10,19 +10,34 @@ import java.util.List;
 @RequestMapping("/api/projects")
 public class ProjectController {
 
-    private final ProjectRepository projectRepository;
+    private final ProjectService projectService;
 
-    public ProjectController(ProjectRepository projectRepository) {
-        this.projectRepository = projectRepository;
+    public ProjectController(ProjectService projectService) {
+        this.projectService = projectService;
     }
 
     @GetMapping
     public List<Project> getProjects() {
-        return projectRepository.findAll();
+        return projectService.getAllProjects();
     }
 
     @PostMapping
     public Project createProject(@RequestBody Project project) {
-        return projectRepository.save(project);
+        return projectService.createProject(project);
+    }
+
+    @GetMapping("/{id}")
+    public Project getProjectById(@PathVariable Long id){
+        return projectService.getProjectById(id);
+    }
+
+    @DeleteMapping("/{id}")
+    public void deleteProjectById(@PathVariable Long id){
+        projectService.deleteProjectById(id);
+    }
+
+    @PutMapping("/{id}")
+    public Project updateProject(@PathVariable Long id,@RequestBody Project updatedProject){
+        return projectService.updateProject(id, updatedProject);
     }
 }
