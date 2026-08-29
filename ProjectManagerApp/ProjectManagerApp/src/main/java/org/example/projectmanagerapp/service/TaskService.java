@@ -2,6 +2,7 @@ package org.example.projectmanagerapp.service;
 
 import org.example.projectmanagerapp.entity.Project;
 import org.example.projectmanagerapp.entity.Task;
+import org.example.projectmanagerapp.kafka.TaskEventProducer;
 import org.example.projectmanagerapp.repository.ProjectRepository;
 import org.example.projectmanagerapp.repository.TaskRepository;
 import org.springframework.stereotype.Service;
@@ -13,10 +14,12 @@ public class TaskService {
 
     private final TaskRepository taskRepository;
     private final ProjectRepository projectRepository;
+    private final TaskEventProducer taskEventProducer;
 
-    public TaskService(TaskRepository taskRepository, ProjectRepository projectRepository){
+    public TaskService(TaskRepository taskRepository, ProjectRepository projectRepository, TaskEventProducer taskEventProducer){
         this.taskRepository = taskRepository;
         this.projectRepository = projectRepository;
+        this.taskEventProducer = taskEventProducer;
     }
 
     public List<Task> getTasks(){
@@ -24,7 +27,9 @@ public class TaskService {
     }
 
     public Task createTask(Task task){
-        return taskRepository.save(task);
+        Task savedTask =  taskRepository.save(task);
+        taskEventProducer.sendTaskCreatedEvent("TASK_CREATED id = " + savedTask.getId() + " title = " + savedTask.getTitle());
+        return savedTask;
     }
 
     public Task createTaskForProject(Long projectId, Task task){

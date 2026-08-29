@@ -2,6 +2,7 @@ package org.example.projectmanagerapp.service;
 
 import org.example.projectmanagerapp.entity.Project;
 import org.example.projectmanagerapp.entity.Task;
+import org.example.projectmanagerapp.kafka.TaskEventProducer;
 import org.example.projectmanagerapp.repository.ProjectRepository;
 import org.example.projectmanagerapp.repository.TaskRepository;
 import org.junit.jupiter.api.Test;
@@ -21,8 +22,9 @@ public class TaskServiceTest {
 
     TaskRepository taskRepository = Mockito.mock(TaskRepository.class);
     ProjectRepository projectRepository = Mockito.mock(ProjectRepository.class);
+    TaskEventProducer taskEventProducer = Mockito.mock(TaskEventProducer.class);
 
-    TaskService taskService = new TaskService(taskRepository, projectRepository);
+    TaskService taskService = new TaskService(taskRepository, projectRepository, taskEventProducer);
 
     @Test
     public void getTasks(){
